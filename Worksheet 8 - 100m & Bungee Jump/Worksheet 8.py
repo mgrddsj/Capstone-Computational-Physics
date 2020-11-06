@@ -102,4 +102,35 @@ print("It takes ", t_arr[find_x_index(100, x_arr)], " seconds for 100m race.")
 print("Theoretical maximum velocity: ", np.max(v_arr))
 
 
-#%% 2c
+#%% 2
+m = 70
+d = 20
+k = 150
+g = 9.8
+cv = 1
+t_max = 60
+steps = 6000
+dt = t_max/steps
+
+t_arr = np.linspace(0, t_max, steps)
+v_arr = np.zeros(steps)
+x_arr = np.zeros(steps)
+x_arr[0] = 100
+
+def next_v(x, v):
+    if x > d:
+        return ((-k*(x-d)-cv*v)/m)*dt
+    else:
+        return 0
+
+def next_x(x, v):
+    return x + v*dt
+
+for i in range(1, steps):
+    v_arr[i] = next_v(x_arr[i-1], v_arr[i-1])
+    x_arr[i] = next_x(x_arr[i-1], v_arr[i-1])
+
+plt.plot(t_arr, x_arr)
+plt.subplots()
+plt.plot(t_arr, v_arr)
+plt.show()
