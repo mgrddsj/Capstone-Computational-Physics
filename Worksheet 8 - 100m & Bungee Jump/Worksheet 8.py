@@ -71,10 +71,10 @@ def d(v, t):
     return (1/2)*A(t)*rho*cd*(v-w)**2
 
 def acceleration(v, t):
-    return (f + f_c(t) - fv - d(v,t))/m
+    return (f + f_c(t) - fv*v - d(v,t))/m
 
 def next_v(x, v, t):
-    return v + ((f + f_c(t) - fv - d(v,t))/m)*dt
+    return v + (acceleration(v, t))*dt
 
 def next_x(x, v):
     return x + v*dt
@@ -102,4 +102,4 @@ print("It takes ", t_arr[find_x_index(100, x_arr)], " seconds for 100m race.")
 print("Theoretical maximum velocity: ", np.max(v_arr))
 
 
-#%%
+#%% 2c
