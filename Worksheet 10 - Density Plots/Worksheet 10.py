@@ -74,3 +74,13 @@ pylab.imshow(xi, origin="lower", extent=[0,side,0,side])
 pylab.gray()
 pylab.show()
 
+#%% stm.txt
+data = np.loadtxt("stm.txt", float)
+pylab.imshow(data, origin="lower", extent=[0, 10, 0, 5], aspect=2.0)
+pylab.jet()
+pylab.colorbar()
+pylab.show()
+
+#%% 3D Graphics
+import vpython
+vpython.sphere()
