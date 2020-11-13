@@ -8,7 +8,7 @@
 # %%
 from vpython import sphere, vector, color
 L = 5
-R = 0.3
+R = 0.5
 for i in range(-L, L + 1):
     for j in range(-L, L + 1):
         for k in range(-L, L - 5):
