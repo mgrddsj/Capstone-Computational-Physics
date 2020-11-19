@@ -4,6 +4,8 @@ from vpython import *
 canvas(background=color.white)
 
 g = 9.8
+m = 1
+k = 1.8
 
 ball = sphere(pos=vector(5, 2, 0), radius=1, color=color.red)
 pivot = vector(0, 20, 0)
@@ -20,8 +22,13 @@ cs = (pivot.y-ball.pos.y)/l # cos(theta)
 theta = acos(cs) # Angle with vertical direction
 vel = 0.0 # Angular velocity
 
-while (t<100):
-    rate(100) # Maximum 100 calculations per second
+
+
+while (t<t_max):
+    rate(200) # Maximum 100 calculations per second
+
+    
+
     acc = -g/l*np.sin(theta) # Updating of angular acceleration
     theta = theta+vel*dt # Updating of angular position
     vel = vel+acc*dt # Updating of angular velocity
