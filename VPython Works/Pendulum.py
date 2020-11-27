@@ -1,16 +1,16 @@
 import numpy as np
 from vpython import *
 
-canvas(background=color.white)
+canvas(background=vector(225/255, 226/255, 225/255), width=1280, height=720, center=vector(0,8,0))
 
 g = 9.8
 m = 1
 k = 10
 
-ball = sphere(pos=vector(5, 2, 0), radius=1, color=color.red)
+ball = sphere(pos=vector(5, 2, 0), radius=1, color=vector(245/255, 245/255, 246/255))
 pivot = vector(0, 20, 0)
-roof = box(pos=pivot, size=vector(10, 0.5, 10), color=color.green)
-spring = helix(pos=pivot, axis=ball.pos-pivot, radius=0.5, color=color.yellow)
+roof = box(pos=pivot, size=vector(10, 0.5, 10), color=vector(0/255, 169/255, 240/255))
+spring = helix(pos=pivot, axis=ball.pos-pivot, radius=0.5, color=vector(0/255, 124/255, 192/255))
 
 t = 0
 t_max = 100
