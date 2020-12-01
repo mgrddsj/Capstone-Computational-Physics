@@ -20,7 +20,7 @@ t = 0
 posgraph = gcurve(color=color.green)
 
 while t<t_max:
-    rate(3000)
+    rate(300)
     ball.p = ball.p + Fnet*dt
     ball.pos = ball.pos + (ball.p/ball.mass)*dt
     t = t + dt
