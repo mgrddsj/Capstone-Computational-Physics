@@ -55,27 +55,28 @@ mass2text = wtext(text="m2:", pos=canvas.title_anchor)
 mass2input = winput(prompt="m2:", text=0.907, pos=canvas.title_anchor, bind=setm1)
 mass3text = wtext(text="m3:", pos=canvas.title_anchor)
 mass3input = winput(prompt="m3:", text=1.3, pos=canvas.title_anchor, bind=setm1)
+wtext(text="ball1:blue ball2:red ball3:green", pos=canvas.title_anchor)
 canvas.append_to_title("\n")
 wtext(text="r1: x:", pos=canvas.title_anchor)
 r1xinput = winput(prompt="r1.x:", text=-0.5, pos=canvas.title_anchor, bind=setr1x)
 wtext(text="y:", pos=canvas.title_anchor)
-r1xinput = winput(prompt="r1.y:", text=-0.5, pos=canvas.title_anchor, bind=setr1y)
+r1yinput = winput(prompt="r1.y:", text=0, pos=canvas.title_anchor, bind=setr1y)
 wtext(text="z:", pos=canvas.title_anchor)
-r1xinput = winput(prompt="r1.z:", text=-0.5, pos=canvas.title_anchor, bind=setr1z)
+r1zinput = winput(prompt="r1.z:", text=0, pos=canvas.title_anchor, bind=setr1z)
 canvas.append_to_title("\n")
 wtext(text="r2: x:", pos=canvas.title_anchor)
-r1xinput = winput(prompt="r2.x:", text=-0.5, pos=canvas.title_anchor, bind=setr2x)
+r2xinput = winput(prompt="r2.x:", text=0.5, pos=canvas.title_anchor, bind=setr2x)
 wtext(text="y:", pos=canvas.title_anchor)
-r1xinput = winput(prompt="r2.y:", text=-0.5, pos=canvas.title_anchor, bind=setr2y)
+r2yinput = winput(prompt="r2.y:", text=0, pos=canvas.title_anchor, bind=setr2y)
 wtext(text="z:", pos=canvas.title_anchor)
-r1xinput = winput(prompt="r2.z:", text=-0.5, pos=canvas.title_anchor, bind=setr2z)
+r2zinput = winput(prompt="r2.z:", text=0, pos=canvas.title_anchor, bind=setr2z)
 canvas.append_to_title("\n")
 wtext(text="r3: x:", pos=canvas.title_anchor)
-r1xinput = winput(prompt="r3.x:", text=-0.5, pos=canvas.title_anchor, bind=setr3x)
+r3xinput = winput(prompt="r3.x:", text=0, pos=canvas.title_anchor, bind=setr3x)
 wtext(text="y:", pos=canvas.title_anchor)
-r1xinput = winput(prompt="r3.y:", text=-0.5, pos=canvas.title_anchor, bind=setr3y)
+r3yinput = winput(prompt="r3.y:", text=1, pos=canvas.title_anchor, bind=setr3y)
 wtext(text="z:", pos=canvas.title_anchor)
-r1xinput = winput(prompt="r3.z:", text=-0.5, pos=canvas.title_anchor, bind=setr3z)
+r3zinput = winput(prompt="r3.z:", text=0, pos=canvas.title_anchor, bind=setr3z)
 canvas.append_to_title("\n")
 
 
@@ -138,7 +139,7 @@ def ThreeBodyEquations(w,t,G,m1,m2,m3):
 #Package initial parameters
 init_params=np.array([r1,r2,r3,v1,v2,v3]) #create array of initial params
 init_params=init_params.flatten() #flatten array to make it 1D
-time_span=np.linspace(0,50,50000) #8 orbital periods and 500 points
+time_span=np.linspace(0,50,50000) #8 orbital periods and 50000 points
 #Run the ODE solver
 three_body_sol=sci.integrate.odeint(ThreeBodyEquations,init_params,time_span,args=(G,m1,m2, m3))
 
@@ -147,23 +148,23 @@ r2_sol=three_body_sol[:,3:6]
 r3_sol=three_body_sol[:,6:9]
 
 # Vpython parts
-sphere1 = sphere(pos=vector(r1_sol[0,0],r1_sol[0,1],r1_sol[0,2]), radius=0.1, texture="minecraft_tree_wood.jpg")
-sphere2 = sphere(pos=vector(r2_sol[0,0],r2_sol[0,1],r2_sol[0,2]), radius=0.1, color=color.red, shininess=0.5, texture=textures.metal)
-sphere3 = sphere(pos=vector(r3_sol[0,0],r3_sol[0,1],r3_sol[0,2]), radius=0.12, color=color.green, shininess=0.1, texture=textures.metal)
+sphere1 = sphere(pos=vector(r1_sol[0,0],r1_sol[0,1],r1_sol[0,2]), radius=0.1, color=color.blue)
+sphere2 = sphere(pos=vector(r2_sol[0,0],r2_sol[0,1],r2_sol[0,2]), radius=0.1, color=color.red, shininess=0.8, texture=textures.metal)
+sphere3 = sphere(pos=vector(r3_sol[0,0],r3_sol[0,1],r3_sol[0,2]), radius=0.12, color=color.green, shininess=0.5, texture=textures.metal)
+trail1 = curve(radius=0.005, color=color.blue)
+trail2 = curve(radius=0.005, color=color.red)
+trail3 = curve(radius=0.005, color=color.green)
+canvas.autoscale = False
 
-# i = 1
-# while i<len(r1_sol):
-#     rate(2000)
-#     sphere1.pos = vector(r1_sol[i,0],r1_sol[i,1],r1_sol[i,2])
-#     sphere2.pos = vector(r2_sol[i,0],r2_sol[i,1],r2_sol[i,2])
-#     sphere3.pos = vector(r3_sol[i,0],r3_sol[i,1],r3_sol[i,2])
-#     slider.value = i
-#     text.text = '{}'.format(i)
-#     i += 1
+for i in range(0, 50000, 35):
+    trail1.append(vector(r1_sol[i][0], r1_sol[i][1], r1_sol[i][2]))
+    trail2.append(vector(r2_sol[i][0], r2_sol[i][1], r2_sol[i][2]))
+    trail3.append(vector(r3_sol[i][0], r3_sol[i][1], r3_sol[i][2]))
 
-# sphere1.make_trail = False
-# sphere2.make_trail = False
-# sphere3.make_trail = False
+# for r1 in r1_sol: trail1.append(vector(r1[0], r1[1], r1[2]))
+# for r2 in r2_sol: trail2.append(vector(r2[0], r2[1], r2[2]))
+# for r3 in r3_sol: trail3.append(vector(r3[0], r3[1], r3[2]))
+
 slider.disabled = False
 button.disabled = False
 running = True
