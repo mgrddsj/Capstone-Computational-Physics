@@ -1,0 +1,3 @@
+@ECHO OFF
+ECHO Running Python program...
+wt "C:\Users\Jesse\Documents\GitHub\Capstone-Computational-Physics\VPython Works\RunThreeBodyGUI1.bat"
