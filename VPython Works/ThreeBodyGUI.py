@@ -15,7 +15,7 @@ r2=[0.5,0,0] #m
 r3=[0,1,0] #m
 
 # Construct GUI
-running = True
+running = False
 
 def run(b):
     global running
@@ -32,7 +32,7 @@ def setspeed(s):
     sphere3.pos = vector(r3_sol[i,0],r3_sol[i,1],r3_sol[i,2])
 canvas = canvas(background=vector(225/255, 226/255, 225/255), width=800, height=600, center=vector(0,0,0))
 
-button = button(text="⏸", pos=canvas.caption_anchor, bind=run, disabled = True)
+play_button = button(text="⏸", pos=canvas.caption_anchor, bind=run, disabled = True)
 slider = slider(min=0, max=49999, value=1, length=700, bind=setspeed, right=15, step=1, disabled = True)
 text = wtext(text='{}'.format(slider.value))
 
@@ -77,9 +77,8 @@ wtext(text="y:", pos=canvas.title_anchor)
 r3yinput = winput(prompt="r3.y:", text=1, pos=canvas.title_anchor, bind=setr3y)
 wtext(text="z:", pos=canvas.title_anchor)
 r3zinput = winput(prompt="r3.z:", text=0, pos=canvas.title_anchor, bind=setr3z)
-canvas.append_to_title("\n")
 
-
+print("Started calculating")
 #Define universal gravitation constant
 G=6.67408e-11 #N-m2/kg2
 #Reference quantities
@@ -161,12 +160,111 @@ for i in range(0, 50000, 35):
     trail2.append(vector(r2_sol[i][0], r2_sol[i][1], r2_sol[i][2]))
     trail3.append(vector(r3_sol[i][0], r3_sol[i][1], r3_sol[i][2]))
 
-# for r1 in r1_sol: trail1.append(vector(r1[0], r1[1], r1[2]))
-# for r2 in r2_sol: trail2.append(vector(r2[0], r2[1], r2[2]))
-# for r3 in r3_sol: trail3.append(vector(r3[0], r3[1], r3[2]))
+# Re-generate
+def generate(b):
+    print("generating")
+    # Disable all buttons first
+    slider.disabled = True
+    play_button.disabled = True
+    running = False
+    #Define universal gravitation constant
+    G=6.67408e-11 #N-m2/kg2
+    #Reference quantities
+    m_nd=1.989e+30 #kg #mass of the sun
+    r_nd=5.326e+12 #m #distance between stars in Alpha Centauri
+    v_nd=30000 #m/s #relative velocity of earth around the sun
+    t_nd=79.91*365*24*3600*0.51 #s #orbital period of Alpha Centauri
+    #Net constants
+    K1=G*t_nd*m_nd/(r_nd**2*v_nd)
+    K2=v_nd*t_nd/r_nd
 
+    #Convert pos vectors to arrays
+    global r1, r2, r3
+    print(r1, r2, r3)
+    r1=np.array(r1,dtype="float64")
+    r2=np.array(r2,dtype="float64")
+    r3=np.array(r3,dtype="float64")
+    print(r1, r2, r3)
+    #Find Centre of Mass
+    r_com=(m1*r1+m2*r2+m3*r3)/(m1+m2+m3)
+    #Define initial velocities
+    v1=[0.01,0.01,0] #m/s
+    v2=[-0.05,0,-0.1] #m/s
+    v3=[0,-0.01,0] #m/s
+    #Convert velocity vectors to arrays
+    v1=np.array(v1,dtype="float64")
+    v2=np.array(v2,dtype="float64")
+    v3=np.array(v3,dtype="float64")
+    #Find velocity of COM
+    v_com=(m1*v1+m2*v2+m3*v3)/(m1+m2+m3)
+
+    #Package initial parameters
+    init_params=np.array([r1,r2,r3,v1,v2,v3]) #create array of initial params
+    init_params=init_params.flatten() #flatten array to make it 1D
+    time_span=np.linspace(0,50,50000) #8 orbital periods and 50000 points
+
+    #A function defining the equations of motion 
+    def ThreeBodyEquations(w,t,G,m1,m2,m3):
+        r1=w[:3]
+        r2=w[3:6]
+        r3=w[6:9]
+        v1=w[9:12]
+        v2=w[12:15]
+        v3=w[15:18]
+
+        #Calculate magnitude or norm of vector
+        r12=sci.linalg.norm(r2-r1)
+        r13=sci.linalg.norm(r3-r1)
+        r23=sci.linalg.norm(r3-r2)
+
+        dv1bydt=K1*m2*(r2-r1)/r12**3+K1*m3*(r3-r1)/r13**3
+        dv2bydt=K1*m1*(r1-r2)/r12**3+K1*m3*(r3-r2)/r23**3
+        dv3bydt=K1*m1*(r1-r3)/r13**3+K1*m2*(r2-r3)/r23**3
+        dr1bydt=K2*v1
+        dr2bydt=K2*v2
+        dr3bydt=K2*v3
+
+        r12_derivs=np.concatenate((dr1bydt,dr2bydt))
+        r_derivs=np.concatenate((r12_derivs,dr3bydt))
+        v12_derivs=np.concatenate((dv1bydt,dv2bydt))
+        v_derivs=np.concatenate((v12_derivs,dv3bydt))
+        derivs=np.concatenate((r_derivs,v_derivs))
+        return derivs
+
+    #Run the ODE solver
+    print("ode solver running")
+    three_body_sol=sci.integrate.odeint(ThreeBodyEquations,init_params,time_span,args=(G,m1,m2, m3))
+    print("ode solving finished")
+
+    r1_sol=three_body_sol[:,:3]
+    r2_sol=three_body_sol[:,3:6]
+    r3_sol=three_body_sol[:,6:9]
+
+    # Vpython parts
+    sphere1.pos = vector(r1_sol[0,0],r1_sol[0,1],r1_sol[0,2])
+    sphere2.pos = vector(r2_sol[0,0],r2_sol[0,1],r2_sol[0,2])
+    sphere3.pos = vector(r3_sol[0,0],r3_sol[0,1],r3_sol[0,2])
+    trail1.clear()
+    trail2.clear()
+    trail3.clear()
+    canvas.center = vector(0,0,0) # Reset camera
+    canvas.autoscale = False
+
+    for i in range(0, 50000, 35):
+        trail1.append(vector(r1_sol[i][0], r1_sol[i][1], r1_sol[i][2]))
+        trail2.append(vector(r2_sol[i][0], r2_sol[i][1], r2_sol[i][2]))
+        trail3.append(vector(r3_sol[i][0], r3_sol[i][1], r3_sol[i][2]))
+    
+    # Enable buttons
+    slider.disabled = False
+    play_button.disabled = False
+    running = True
+    print("finished")
+
+print("ready")
+generate_button = button(text="Generate", pos=canvas.title_anchor, bind=generate)
 slider.disabled = False
-button.disabled = False
+play_button.disabled = False
 running = True
 
 i = 1
