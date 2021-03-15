@@ -5,7 +5,7 @@ from scipy import integrate
 from vpython import *
 from ThreeBodyMotionSolver import *
 from timeit import default_timer as timer
-import threading
+from multiprocessing import Process, Manager
 
 # Prepare variables
 # Define masses
@@ -46,7 +46,14 @@ def generate(b):
     trail3.clear()
 
     start = timer()
-    r1_sol, r2_sol, r3_sol = solveThreeBodyMotion(m1, m2, m3, r1, r2, r3)
+    result = []
+    with Manager() as manager:
+        p = Process(target=solveThreeBodyMotion, args=(m1, m2, m3, r1, r2, r3, result))
+        p.start()
+        print("process started")
+        p.join()
+        print("process finished")
+    r1_sol, r2_sol, r3_sol = result[0], result[1], result[2]
     end = timer()
     print("finished calculating, time elapsed:", (end-start))
     sphere1.pos = vector(r1_sol[0,0],r1_sol[0,1],r1_sol[0,2])
@@ -115,13 +122,9 @@ r3zinput = winput(prompt="r3.z:", text=0, pos=scene.title_anchor, bind=setr3z)
 
 print("Started calculating")
 start = timer()
-r1_sol, r2_sol, r3_sol = solveThreeBodyMotion(m1, m2, m3, r1, r2, r3)
-end = timer()
-print("finished calculating, time elapsed:", (end-start))
-
-print("Started second round of calculating")
-start = timer()
-solveThreeBodyMotion(m1, m2, m3, r1, r2, r3)
+result = []
+solveThreeBodyMotion(m1, m2, m3, r1, r2, r3, result)
+r1_sol, r2_sol, r3_sol = result[0], result[1], result[2]
 end = timer()
 print("finished calculating, time elapsed:", (end-start))
 
