@@ -65,7 +65,7 @@ def generate(b):
     play_button.disabled = False
     running = True
 
-# Set mass
+# functions for vpython widgets
 def setm1(m): m1 = m
 def setm2(m): m2 = m
 def setm3(m): m3 = m
@@ -113,15 +113,10 @@ r3yinput = winput(prompt="r3.y:", text=1, pos=scene.title_anchor, bind=setr3y)
 wtext(text="z:", pos=scene.title_anchor)
 r3zinput = winput(prompt="r3.z:", text=0, pos=scene.title_anchor, bind=setr3z)
 
+
 print("Started calculating")
 start = timer()
 r1_sol, r2_sol, r3_sol = solveThreeBodyMotion(m1, m2, m3, r1, r2, r3)
-end = timer()
-print("finished calculating, time elapsed:", (end-start))
-
-print("Started second round of calculating")
-start = timer()
-solveThreeBodyMotion(m1, m2, m3, r1, r2, r3)
 end = timer()
 print("finished calculating, time elapsed:", (end-start))
 
@@ -132,13 +127,18 @@ sphere3 = sphere(pos=vector(r3_sol[0,0],r3_sol[0,1],r3_sol[0,2]), radius=0.12, c
 trail1 = curve(radius=0.005, color=color.blue)
 trail2 = curve(radius=0.005, color=color.red)
 trail3 = curve(radius=0.005, color=color.green)
+def set_trail_visibility(c):
+    trail1.visible = c.checked
+    trail2.visible = c.checked
+    trail3.visible = c.checked
+trailcheckbox = checkbox(text="Show Trails", pos=scene.caption_anchor, bind=set_trail_visibility, checked=True)
 scene.autoscale = False
 
 for i in range(0, 50000, 35):
     trail1.append(vector(r1_sol[i][0], r1_sol[i][1], r1_sol[i][2]))
     trail2.append(vector(r2_sol[i][0], r2_sol[i][1], r2_sol[i][2]))
     trail3.append(vector(r3_sol[i][0], r3_sol[i][1], r3_sol[i][2]))
-
+    
 print("ready")
 generate_button = button(text="Generate", pos=scene.title_anchor, bind=generate)
 slider.disabled = False
