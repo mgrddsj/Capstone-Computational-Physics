@@ -5,7 +5,6 @@ from scipy import integrate
 from vpython import *
 from ThreeBodyMotionSolver import *
 from timeit import default_timer as timer
-import threading
 
 # Prepare variables
 # Define masses
