@@ -6,16 +6,7 @@ from vpython import *
 
 def solveThreeBodyMotion(m1, m2, m3, r1, r2, r3):
     print((m1, m2, m3, r1, r2, r3))
-    # Prepare variables
-    # Define masses
-    m1=1.1 #First ball
-    m2=0.907 #Second ball
-    m3=1.3 #Third ball
-    # Define initial position vectors
-    r1=[-0.5,0,0] #m
-    r2=[0.5,0,0] #m
-    r3=[0,1,0] #m
-
+    
     #Define universal gravitation constant
     G=6.67408e-11 #N-m2/kg2
     #Reference quantities
