@@ -9,13 +9,13 @@ import threading
 
 # Prepare variables
 # Define masses
-m1=1.1 #First ball
-m2=0.907 #Second ball
-m3=1.3 #Third ball
+m1=1.1 # First ball
+m2=0.907 # Second ball
+m3=1.3 # Third ball
 # Define initial position vectors
-r1=[-0.5,0,0] #m
-r2=[0.5,0,0] #m
-r3=[0,1,0] #m
+r1=[-0.5,0,0] # m
+r2=[0.5,0,0] # m
+r3=[0,1,0] # m
 
 # Prepare functions for GUI
 running = False
