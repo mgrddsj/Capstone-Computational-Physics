@@ -80,10 +80,10 @@ def setr3y(i): r3[1] = i
 def setr3z(i): r3[2] = i
 
 # Construct GUI
-scene = canvas(background=vector(225/255, 226/255, 225/255), width=800, height=600, center=vector(0,0,0))
+scene = canvas(background=vector(225/255, 226/255, 225/255), width=1400, height=600, center=vector(0,0,0))
 play_button = button(text="⏸", pos=scene.caption_anchor, bind=run, disabled = True)
-slider = slider(min=0, max=19999, value=1, length=700, bind=setspeed, right=15, step=1, disabled = True)
-text = wtext(text='{}'.format(slider.value))
+slider = slider(min=0, max=49999, value=1, length=1250, bind=setspeed, right=15, step=1, disabled = True)
+current_frame = wtext(text='Frame: {}'.format(slider.value))
 mass1text = wtext(text="m1:", pos=scene.title_anchor)
 mass1input = winput(prompt="m1:", text=1.1, pos=scene.title_anchor, bind=setm1)
 mass2text = wtext(text="m2:", pos=scene.title_anchor)
@@ -112,7 +112,7 @@ wtext(text="y:", pos=scene.title_anchor)
 r3yinput = winput(prompt="r3.y:", text=1, pos=scene.title_anchor, bind=setr3y)
 wtext(text="z:", pos=scene.title_anchor)
 r3zinput = winput(prompt="r3.z:", text=0, pos=scene.title_anchor, bind=setr3z)
-
+loading = label(text="Computing...", color=color.black, linecolor=color.black, height=50)
 
 print("Started calculating")
 start = timer()
@@ -127,10 +127,15 @@ sphere3 = sphere(pos=vector(r3_sol[0,0],r3_sol[0,1],r3_sol[0,2]), radius=0.12, c
 trail1 = curve(radius=0.005, color=color.blue)
 trail2 = curve(radius=0.005, color=color.red)
 trail3 = curve(radius=0.005, color=color.green)
+
 def set_trail_visibility(c):
     trail1.visible = c.checked
     trail2.visible = c.checked
     trail3.visible = c.checked
+def reset_cam(b):
+    scene.center = vector(0,0,0)
+scene.append_to_caption("\n")
+reset_cam_btn = button(text="Reset Camera", pos=scene.caption_anchor, bind=reset_cam)
 trailcheckbox = checkbox(text="Show Trails", pos=scene.caption_anchor, bind=set_trail_visibility, checked=True)
 scene.autoscale = False
 
@@ -140,9 +145,9 @@ for i in range(0, 50000, 35):
     trail3.append(vector(r3_sol[i][0], r3_sol[i][1], r3_sol[i][2]))
     
 print("ready")
-generate_button = button(text="Generate", pos=scene.title_anchor, bind=generate)
 slider.disabled = False
 play_button.disabled = False
+loading.visible = False
 running = True
 
 i = 1
@@ -153,5 +158,5 @@ while True:
         sphere2.pos = vector(r2_sol[i,0],r2_sol[i,1],r2_sol[i,2])
         sphere3.pos = vector(r3_sol[i,0],r3_sol[i,1],r3_sol[i,2])
         slider.value = i
-        text.text = '{}'.format(i)
+        current_frame.text = 'Frame: {}'.format(i)
         i += 1
