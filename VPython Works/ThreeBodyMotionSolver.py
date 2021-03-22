@@ -64,13 +64,11 @@ def solveThreeBodyMotion(m1, m2, m3, r1, r2, r3):
         return derivs
 
     # Package initial parameters
-    init_params=np.array([r1,r2,r3,v1,v2,v3]) #create array of initial params
-    init_params=init_params.flatten() #flatten array to make it 1D
-    time_span=np.linspace(0,50,50000) #8 orbital periods and 50000 points
+    init_params=np.array([r1,r2,r3,v1,v2,v3]) # create array of initial params
+    init_params=init_params.flatten() # flatten array to make it 1D
+    time_span=np.linspace(0,50,50000) # 8 orbital periods and 50000 points
     # Run the ODE solver
-    print("ode solver started")
     three_body_sol=sci.integrate.odeint(ThreeBodyEquations,init_params,time_span,args=(G,m1,m2, m3))
-    print("ode solver finished")
 
     r1_sol=three_body_sol[:,:3]
     r2_sol=three_body_sol[:,3:6]
